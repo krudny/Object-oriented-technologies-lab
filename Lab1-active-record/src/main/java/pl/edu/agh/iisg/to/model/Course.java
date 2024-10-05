@@ -69,7 +69,7 @@ public class Course {
         Object[] args = { student.id(), this.id };
 
         try {
-            QueryExecutor.createAndObtainId(sql, args);
+            QueryExecutor.create(sql, args);
             return true;
 
         } catch (SQLException e) {
