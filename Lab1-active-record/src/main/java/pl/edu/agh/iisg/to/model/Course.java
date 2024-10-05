@@ -65,12 +65,16 @@ public class Course {
     }
 
     public boolean enrollStudent(final Student student) {
-        String enrollStudentSql = "";
-        Object[] args = {
+        String sql = "INSERT INTO student_course (student_id, course_id) VALUES (?, ?)";
+        Object[] args = { student.id(), this.id };
 
-        };
+        try {
+            QueryExecutor.createAndObtainId(sql, args);
+            return true;
 
-        //TODO
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return false;
     }
