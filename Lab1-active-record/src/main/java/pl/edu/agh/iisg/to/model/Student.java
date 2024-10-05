@@ -25,13 +25,17 @@ public class Student {
     }
 
     public static Optional<Student> create(final String firstName, final String lastName, final int indexNumber) {
-        // TODO
-        String sql = "";
+        String sql = "INSERT INTO student (first_name, last_name, index_number) VALUES (?, ?, ?)";
 
-        // TODO
-        // it is important to maintain the correct order of the variables
-        Object[] args = { };
+        Object[] args = { firstName, lastName, indexNumber };
 
+        try {
+            int id = QueryExecutor.createAndObtainId(sql, args);
+            return findById(id);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return Optional.empty();
     }
