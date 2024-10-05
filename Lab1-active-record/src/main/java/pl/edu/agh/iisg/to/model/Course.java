@@ -109,7 +109,9 @@ public class Course {
     }
 
     public List<Student> cachedStudentsList() {
-        //TOTO implement
+        if (!isStudentsListDownloaded) {
+            enrolledStudents = studentList();
+        }
         return enrolledStudents;
     }
 
