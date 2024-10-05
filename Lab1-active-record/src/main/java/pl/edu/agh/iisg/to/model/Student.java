@@ -41,7 +41,26 @@ public class Student {
     }
 
     public static Optional<Student> findByIndexNumber(final int indexNumber) {
-        // TODO
+        String sql = "SELECT * FROM student WHERE index_number = (?)";
+        Object[] args = { indexNumber };
+
+        try {
+            ResultSet result = QueryExecutor.read(sql, args);
+
+            if (result.next()) {
+                return Optional.of(new Student(
+                        result.getInt("id"),
+                        result.getString("first_name"),
+                        result.getString("last_name"),
+                        result.getInt("index_number")
+                ));
+            } else {
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return Optional.empty();
     }
 
