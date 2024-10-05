@@ -80,13 +80,30 @@ public class Course {
     }
 
     public List<Student> studentList() {
-        String findStudentListSql = "";
+        String findStudentListSql =
+                """ 
+                SELECT * FROM student_course
+                JOIN student ON student_course.student_id = student.id
+                WHERE student_course.course_id = (?)
+                """;
         Object[] args = {
-
+                this.id
         };
 
         List<Student> resultList = new LinkedList<>();
-        // TODO
+
+        try (ResultSet rs = QueryExecutor.read(findStudentListSql, args)) {
+            while (rs.next()) {
+                resultList.add(new Student(
+                        rs.getInt("student_id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getInt("index_number")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return resultList;
     }
