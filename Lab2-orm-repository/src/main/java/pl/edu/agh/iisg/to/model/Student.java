@@ -26,7 +26,6 @@ public class Student {
     private final Set<Grade> gradeSet = new HashSet<>();
 
     @ManyToMany(mappedBy = "studentSet", cascade = CascadeType.PERSIST)
-
     private final Set<Course> courseSet = new HashSet<>();
 
     public Student() {

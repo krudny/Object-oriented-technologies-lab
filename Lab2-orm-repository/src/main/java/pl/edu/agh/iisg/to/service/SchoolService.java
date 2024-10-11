@@ -1,15 +1,17 @@
 package pl.edu.agh.iisg.to.service;
 
+import jakarta.transaction.Transaction;
+import org.hibernate.Session;
 import pl.edu.agh.iisg.to.dao.CourseDao;
 import pl.edu.agh.iisg.to.dao.GradeDao;
 import pl.edu.agh.iisg.to.dao.StudentDao;
 import pl.edu.agh.iisg.to.model.Course;
+import pl.edu.agh.iisg.to.model.Grade;
 import pl.edu.agh.iisg.to.model.Student;
 import pl.edu.agh.iisg.to.session.TransactionService;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SchoolService {
 
@@ -29,22 +31,55 @@ public class SchoolService {
     }
 
     public boolean enrollStudent(final Course course, final Student student) {
-        // TODO - implement
-        return false;
+        return transactionService.doAsTransaction(() -> {
+            Set<Student> courseStudentSet = course.studentSet();
+            if (courseStudentSet.contains(student)) {
+                return false;
+            }
+
+            courseStudentSet.add(student);
+            student.courseSet().add(course);
+            return true;
+        }).orElseThrow();
     }
 
     public boolean removeStudent(int indexNumber) {
-        // TODO - implement
-        return false;
+        return transactionService.doAsTransaction(() -> {
+            Optional<Student> studentOpt = studentDao.findByIndexNumber(indexNumber);
+
+            if (studentOpt.isPresent()) {
+                Student student = studentOpt.get();
+
+                student.courseSet().forEach(course -> {
+                    course.studentSet().remove(student); //
+                    student.courseSet().remove(course);
+                });
+
+                studentDao.remove(student);
+                return true;
+            }
+
+            return false;
+        }).orElseThrow();
     }
 
     public boolean gradeStudent(final Student student, final Course course, final float gradeValue) {
-        // TODO - implement
-        return false;
+        return transactionService.doAsTransaction(() -> {
+            Grade grade = new Grade(student, course, gradeValue);
+            gradeDao.save(grade);
+            student.gradeSet().add(grade);
+            course.gradeSet().add(grade);
+            return true;
+        }).orElseThrow();
     }
 
     public Map<String, List<Float>> getStudentGrades(String courseName) {
-        // TODO - implement
-        return Collections.emptyMap();
+        Course course = courseDao.findByName(courseName).orElseThrow();
+
+        return course.gradeSet().stream()
+                .collect(Collectors.groupingBy(
+                        grade -> grade.student().fullName(),
+                        Collectors.mapping(Grade::grade, Collectors.toList())
+                ));
     }
 }
