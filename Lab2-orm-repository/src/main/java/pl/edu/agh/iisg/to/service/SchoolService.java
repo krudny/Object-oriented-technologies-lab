@@ -76,10 +76,18 @@ public class SchoolService {
     public Map<String, List<Float>> getStudentGrades(String courseName) {
         Course course = courseDao.findByName(courseName).orElseThrow();
 
-        return course.gradeSet().stream()
-                .collect(Collectors.groupingBy(
-                        grade -> grade.student().fullName(),
-                        Collectors.mapping(Grade::grade, Collectors.toList())
-                ));
+        Map<String, List<Float>> result = new LinkedHashMap<>();
+
+        for (Student student : course.studentSet()) {
+            String studentName = student.fullName();
+            List<Float> grades = course.gradeSet().stream()
+                    .filter(grade -> grade.student().equals(student))
+                    .map(Grade::grade)
+                    .sorted()
+                    .collect(Collectors.toList());
+            result.put(studentName, grades);
+        }
+
+        return result;
     }
 }
