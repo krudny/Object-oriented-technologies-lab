@@ -1,13 +1,12 @@
 package pl.edu.agh.iisg.to.service;
 
-import jakarta.transaction.Transaction;
-import org.hibernate.Session;
 import pl.edu.agh.iisg.to.dao.CourseDao;
 import pl.edu.agh.iisg.to.dao.GradeDao;
 import pl.edu.agh.iisg.to.dao.StudentDao;
 import pl.edu.agh.iisg.to.model.Course;
 import pl.edu.agh.iisg.to.model.Grade;
 import pl.edu.agh.iisg.to.model.Student;
+import pl.edu.agh.iisg.to.repository.StudentRepository;
 import pl.edu.agh.iisg.to.session.TransactionService;
 
 import java.util.*;
@@ -23,11 +22,14 @@ public class SchoolService {
 
     private final GradeDao gradeDao;
 
-    public SchoolService(TransactionService transactionService, StudentDao studentDao, CourseDao courseDao, GradeDao gradeDao) {
+    private final StudentRepository studentRepository;
+
+    public SchoolService(TransactionService transactionService, StudentDao studentDao, CourseDao courseDao, GradeDao gradeDao, StudentRepository studentRepository) {
         this.transactionService = transactionService;
         this.studentDao = studentDao;
         this.courseDao = courseDao;
         this.gradeDao = gradeDao;
+        this.studentRepository = studentRepository;
     }
 
     public boolean enrollStudent(final Course course, final Student student) {
@@ -49,13 +51,7 @@ public class SchoolService {
 
             if (studentOpt.isPresent()) {
                 Student student = studentOpt.get();
-
-                student.courseSet().forEach(course -> {
-                    course.studentSet().remove(student); //
-                    student.courseSet().remove(course);
-                });
-
-                studentDao.remove(student);
+                studentRepository.remove(student);
                 return true;
             }
 
