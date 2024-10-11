@@ -1,8 +1,13 @@
 package pl.edu.agh.iisg.to.dao;
 
+import jakarta.persistence.NoResultException;
+import org.hibernate.Session;
+import org.hibernate.SessionException;
 import pl.edu.agh.iisg.to.model.Student;
 import pl.edu.agh.iisg.to.session.SessionService;
 
+import javax.persistence.PersistenceException;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -14,17 +19,31 @@ public class StudentDao extends GenericDao<Student> {
     }
 
     public Optional<Student> create(final String firstName, final String lastName, final int indexNumber) {
-        // TODO - implement
-        return Optional.empty();
+        if (findByIndexNumber(indexNumber).isPresent()) {
+            return Optional.empty();
+        }
+
+        Student student = new Student(firstName, lastName, indexNumber);
+        return save(student);
+
     }
 
     public List<Student> findAll() {
-        // TODO - implement
-        return Collections.emptyList();
+        String jpql = "SELECT s FROM Student s ORDER BY s.lastName";
+        return currentSession().createQuery(jpql, Student.class).getResultList();
     }
 
     public Optional<Student> findByIndexNumber(final int indexNumber) {
-        // TODO - implement
-        return Optional.empty();
+        String jpql = "SELECT s from Student s WHERE s.indexNumber = :indexNumber ";
+        try {
+            Student student = currentSession()
+                    .createQuery(jpql, Student.class)
+                    .setParameter("indexNumber", indexNumber)
+                    .getSingleResult();
+            return Optional.of(student);
+        } catch (NoResultException e){
+            return Optional.empty();
+        }
     }
 }
+

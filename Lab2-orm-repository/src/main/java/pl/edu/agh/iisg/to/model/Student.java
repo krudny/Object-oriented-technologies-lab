@@ -7,30 +7,27 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = Student.TABLE_NAME)
+@Table(name=Student.TABLE_NAME)
 public class Student {
 
     public static final String TABLE_NAME = "student";
-
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = Columns.ID)
     private int id;
-
-    @Column(name = Columns.FIRST_NAME)
+    @Column(name = Columns.FIRST_NAME, nullable = false, length = 50)
     private String firstName;
-
-    @Column(name = Columns.LAST_NAME)
+    @Column(name = Columns.LAST_NAME, nullable = false, length = 50)
     private String lastName;
-
-    @Column(name = Columns.INDEX_NUMBER)
+    @Column(name = Columns.INDEX_NUMBER, unique = true)
     private int indexNumber;
 
     @OneToMany
-    private Set<Grade> gradeSet = new HashSet<>();
+    private final Set<Grade> gradeSet = new HashSet<>();
 
     @ManyToMany(mappedBy = "studentSet", cascade = CascadeType.PERSIST)
-    private Set<Course> courseSet = new HashSet<>();
+
+    private final Set<Course> courseSet = new HashSet<>();
 
     public Student() {
     }
