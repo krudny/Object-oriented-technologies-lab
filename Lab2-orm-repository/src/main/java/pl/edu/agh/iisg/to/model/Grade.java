@@ -20,7 +20,7 @@ public class Grade {
     public static final String TABLE_NAME = "grade";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = Columns.ID)
     private int id;
 
