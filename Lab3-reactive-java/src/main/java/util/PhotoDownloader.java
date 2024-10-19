@@ -1,9 +1,12 @@
 package util;
 
 import driver.DuckDuckGoDriver;
+import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observables.GroupedObservable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import model.Photo;
+import model.PhotoSize;
 import org.apache.tika.Tika;
 
 import java.io.ByteArrayOutputStream;
@@ -15,6 +18,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,36 +36,43 @@ public class PhotoDownloader {
                 "https://i.pinimg.com/736x/7c/14/c9/7c14c97839940a09f987fbadbd47eb89--detective-monk-adrian-monk.jpg").map(this::getPhoto);
     }
 
-    public Observable<Photo> searchForPhotos(List<String> searchQueries) throws IOException, InterruptedException {
-        PhotoProcessor photoProcessor = new PhotoProcessor();
-        List<Observable<Photo>> observables = new ArrayList<>();
-
-        for (String searchQuery : searchQueries) {
-            Observable<Photo> queryObservable = Observable.create(observer -> {
-                List<String> photoUrls = DuckDuckGoDriver.searchForImages(searchQuery);
-
+    public Observable<Photo> searchForPhotos(String searchQuery) {
+        return Observable.create((observer) -> {
+            DuckDuckGoDriver.searchForImages(searchQuery).forEach(url -> {
                 try {
-                    for (String photoUrl : photoUrls) {
-                        if (observer.isDisposed()) {
-                            break;
-                        }
-
-                        try {
-                            observer.onNext(getPhoto(photoUrl));
-                        } catch (IOException e) {
-                            log.log(Level.WARNING, "Could not download a photo", e);
-                        }
-                    }
-                    observer.onComplete();
-                } catch (Exception e) {
-                    observer.onError(e);
+                    observer.onNext(getPhoto(url));
+                } catch (IOException e) {
+                    log.log(Level.WARNING, "could not download a photo", e);
                 }
             });
+            observer.onComplete();
+        });
+    }
 
-            observables.add(queryObservable.subscribeOn(Schedulers.io()));
-        }
+    public Observable<Photo> searchForPhotos(List<String> searchQueries)  {
+        PhotoProcessor photoProcessor = new PhotoProcessor();
 
-        return Observable.merge(observables).compose(photoProcessor::processPhotos);
+        return Observable.fromIterable(searchQueries)
+                .flatMap(this::searchForPhotos)
+                .compose(this::setSchedulerBasedOnPhotoSize)
+                .compose(photoProcessor::processPhotos)
+                .observeOn(Schedulers.io())
+                .buffer(5, TimeUnit.SECONDS)
+                .flatMap(Observable::fromIterable);
+    }
+
+    private Observable<Photo> setSchedulerBasedOnPhotoSize(@NonNull Observable<Photo> photos) {
+        return photos
+                .groupBy(PhotoSize::resolve)
+                .flatMap(this::setSuitableScheduler);
+    }
+
+    private Observable<Photo> setSuitableScheduler(GroupedObservable<PhotoSize, Photo> group) {
+        return switch (Objects.requireNonNull(group.getKey())) {
+            case SMALL -> group.observeOn(Schedulers.io());
+            case MEDIUM -> group.observeOn(Schedulers.io());
+            case LARGE -> group.observeOn(Schedulers.computation());
+        };
     }
 
     private Photo getPhoto(String photoUrl) throws IOException {
