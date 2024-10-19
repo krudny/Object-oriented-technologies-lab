@@ -2,6 +2,7 @@ package util;
 
 import driver.DuckDuckGoDriver;
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import model.Photo;
 import org.apache.tika.Tika;
 
@@ -30,28 +31,35 @@ public class PhotoDownloader {
                 "https://i.pinimg.com/736x/7c/14/c9/7c14c97839940a09f987fbadbd47eb89--detective-monk-adrian-monk.jpg").map(this::getPhoto);
     }
 
-    public Observable<Photo> searchForPhotos(String searchQuery) throws IOException, InterruptedException {
-        return Observable.create(observer -> {
-            List<String> photoUrls = DuckDuckGoDriver.searchForImages(searchQuery);
+    public Observable<Photo> searchForPhotos(List<String> searchQueries) throws IOException, InterruptedException {
+        List<Observable<Photo>> observables = new ArrayList<>();
 
-            try {
-                for(String photoUrl : photoUrls) {
-                    if (observer.isDisposed()) {
-                        break;
+        for (String searchQuery : searchQueries) {
+            Observable<Photo> queryObservable = Observable.create(observer -> {
+                List<String> photoUrls = DuckDuckGoDriver.searchForImages(searchQuery);
+
+                try {
+                    for (String photoUrl : photoUrls) {
+                        if (observer.isDisposed()) {
+                            break;
+                        }
+
+                        try {
+                            observer.onNext(getPhoto(photoUrl));
+                        } catch (IOException e) {
+                            log.log(Level.WARNING, "Could not download a photo", e);
+                        }
                     }
-
-                    try {
-                        observer.onNext(getPhoto(photoUrl));
-                    } catch (IOException e) {
-                        log.log(Level.WARNING, "Could not download a photo", e);
-                    }
-
+                    observer.onComplete();
+                } catch (Exception e) {
+                    observer.onError(e);
                 }
-                observer.onComplete();
-            } catch (Exception e) {
-                observer.onError(e);
-            }
-        });
+            });
+
+            observables.add(queryObservable.subscribeOn(Schedulers.io()));
+        }
+
+        return Observable.merge(observables);
     }
 
     private Photo getPhoto(String photoUrl) throws IOException {

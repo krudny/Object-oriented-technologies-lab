@@ -9,6 +9,8 @@ import util.PhotoSerializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,28 +48,21 @@ public class PhotoCrawler {
 
     public void downloadPhotosForQuery(String query) throws IOException {
         try {
-            photoDownloader.searchForPhotos(query)
-                    .take(10)
+            photoDownloader.searchForPhotos(Collections.singletonList(query))
                     .blockingSubscribe(photoSerializer::savePhoto);
         } catch (InterruptedException e) {
-            log.log(Level.SEVERE, "Downloading photo examples error", e);
+            log.log(Level.SEVERE, "Downloading photo error", e);
         }
     }
 
     public void downloadPhotosForMultipleQueries(List<String> queries) {
-        List<Observable<Photo>> list = new ArrayList<>();
-
         try {
-            for (String query : queries) {
-                list.add(photoDownloader.searchForPhotos(query).subscribeOn(Schedulers.io()));
-            }
+            photoDownloader.searchForPhotos(queries)
+                    .blockingSubscribe(photoSerializer::savePhoto);
         } catch (IOException | InterruptedException e) {
             log.log(Level.SEVERE, "Downloading multiple photos error", e);
         }
-
-        Observable.merge(list)
-                .take(15)
-                .blockingSubscribe(photoSerializer::savePhoto,
-                        e -> log.log(Level.SEVERE, "Error downloading photos", e));
     }
+
+
 }
