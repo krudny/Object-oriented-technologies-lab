@@ -30,18 +30,28 @@ public class PhotoDownloader {
                 "https://i.pinimg.com/736x/7c/14/c9/7c14c97839940a09f987fbadbd47eb89--detective-monk-adrian-monk.jpg").map(this::getPhoto);
     }
 
-    public List<Photo> searchForPhotos(String searchQuery) throws IOException, InterruptedException {
-        List<Photo> photos = new ArrayList<>();
-        List<String> photoUrls = DuckDuckGoDriver.searchForImages(searchQuery);
+    public Observable<Photo> searchForPhotos(String searchQuery) throws IOException, InterruptedException {
+        return Observable.create(observer -> {
+            List<String> photoUrls = DuckDuckGoDriver.searchForImages(searchQuery);
 
-        for (String photoUrl : photoUrls) {
             try {
-                photos.add(getPhoto(photoUrl));
-            } catch (IOException e) {
-                log.log(Level.WARNING, "Could not download a photo", e);
+                for(String photoUrl : photoUrls) {
+                    if (observer.isDisposed()) {
+                        break;
+                    }
+
+                    try {
+                        observer.onNext(getPhoto(photoUrl));
+                    } catch (IOException e) {
+                        log.log(Level.WARNING, "Could not download a photo", e);
+                    }
+
+                }
+                observer.onComplete();
+            } catch (Exception e) {
+                observer.onError(e);
             }
-        }
-        return photos;
+        });
     }
 
     private Photo getPhoto(String photoUrl) throws IOException {
