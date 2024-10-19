@@ -1,12 +1,11 @@
 package app;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 public class CrawlerApp {
 
-    public static final String SCRAPER_API_KEY = "*** Enter your https://www.scraperapi.com API key here ***";
+    public static final String SCRAPER_API_KEY = "7811b91612435e2e05f8839ad2d3e13d";
 
     private static final List<String> TOPICS = List.of("Agent Cooper", "Sherlock", "Poirot", "Detective Monk");
 

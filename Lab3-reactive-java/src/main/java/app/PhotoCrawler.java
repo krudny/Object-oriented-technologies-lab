@@ -1,5 +1,6 @@
 package app;
 
+import io.reactivex.rxjava3.core.Observable;
 import model.Photo;
 import util.PhotoDownloader;
 import util.PhotoProcessor;
@@ -32,10 +33,10 @@ public class PhotoCrawler {
 
     public void downloadPhotoExamples() {
         try {
-            List<Photo> downloadedExamples = photoDownloader.getPhotoExamples();
-            for (Photo photo : downloadedExamples) {
-                photoSerializer.savePhoto(photo);
-            }
+            Observable<Photo> downloadedExamples = photoDownloader.getPhotoExamples();
+
+            downloadedExamples.blockingSubscribe(photoSerializer::savePhoto);
+
         } catch (IOException e) {
             log.log(Level.SEVERE, "Downloading photo examples error", e);
         }

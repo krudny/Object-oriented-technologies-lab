@@ -1,6 +1,7 @@
 package util;
 
 import driver.DuckDuckGoDriver;
+import io.reactivex.rxjava3.core.Observable;
 import model.Photo;
 import org.apache.tika.Tika;
 
@@ -20,8 +21,9 @@ public class PhotoDownloader {
 
     private static final Logger log = Logger.getLogger(PhotoDownloader.class.getName());
 
-    public List<Photo> getPhotoExamples() throws IOException {
-        return Arrays.asList(getPhoto("https://i.ytimg.com/vi/7uxQjydfBOU/hqdefault.jpg"),
+    public Observable<Photo> getPhotoExamples() throws IOException {
+        return Observable.just(
+                getPhoto("https://i.ytimg.com/vi/7uxQjydfBOU/hqdefault.jpg"),
                 getPhoto("http://digitalspyuk.cdnds.net/16/51/1280x640/landscape-1482419524-12382542-low-res-sherlock.jpg"),
                 getPhoto("http://image.pbs.org/video-assets/pbs/masterpiece/132733/images/mezzanine_172.jpg"),
                 getPhoto("https://classicmystery.files.wordpress.com/2016/04/miss-marple-2.jpg"),
