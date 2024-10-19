@@ -1,5 +1,6 @@
 package util;
 
+import io.reactivex.rxjava3.core.Observable;
 import model.Photo;
 import model.PhotoSize;
 
@@ -67,5 +68,11 @@ public class PhotoProcessor {
             finalWidth = (int) (inputImage.getWidth() / widthRatio);
         }
         return new Dimension(finalWidth, finalHeight);
+    }
+
+    public Observable<Photo> processPhotos(Observable<Photo> photos) {
+        return photos
+                .filter(this::isPhotoValid)
+                .map(this::convertToMiniature);
     }
 }

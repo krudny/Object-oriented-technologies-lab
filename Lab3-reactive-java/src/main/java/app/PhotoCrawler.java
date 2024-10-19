@@ -47,12 +47,7 @@ public class PhotoCrawler {
     }
 
     public void downloadPhotosForQuery(String query) throws IOException {
-        try {
-            photoDownloader.searchForPhotos(Collections.singletonList(query))
-                    .blockingSubscribe(photoSerializer::savePhoto);
-        } catch (InterruptedException e) {
-            log.log(Level.SEVERE, "Downloading photo error", e);
-        }
+        this.downloadPhotosForMultipleQueries(Collections.singletonList(query));
     }
 
     public void downloadPhotosForMultipleQueries(List<String> queries) {
@@ -63,6 +58,5 @@ public class PhotoCrawler {
             log.log(Level.SEVERE, "Downloading multiple photos error", e);
         }
     }
-
 
 }

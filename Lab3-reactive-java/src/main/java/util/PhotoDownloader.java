@@ -32,6 +32,7 @@ public class PhotoDownloader {
     }
 
     public Observable<Photo> searchForPhotos(List<String> searchQueries) throws IOException, InterruptedException {
+        PhotoProcessor photoProcessor = new PhotoProcessor();
         List<Observable<Photo>> observables = new ArrayList<>();
 
         for (String searchQuery : searchQueries) {
@@ -59,7 +60,7 @@ public class PhotoDownloader {
             observables.add(queryObservable.subscribeOn(Schedulers.io()));
         }
 
-        return Observable.merge(observables);
+        return Observable.merge(observables).compose(photoProcessor::processPhotos);
     }
 
     private Photo getPhoto(String photoUrl) throws IOException {
