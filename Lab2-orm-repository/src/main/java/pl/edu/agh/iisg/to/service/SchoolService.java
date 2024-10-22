@@ -24,7 +24,11 @@ public class SchoolService {
 
     private final StudentRepository studentRepository;
 
-    public SchoolService(TransactionService transactionService, StudentDao studentDao, CourseDao courseDao, GradeDao gradeDao, StudentRepository studentRepository) {
+    public SchoolService(TransactionService transactionService,
+                         StudentDao studentDao,
+                         CourseDao courseDao,
+                         GradeDao gradeDao,
+                         StudentRepository studentRepository) {
         this.transactionService = transactionService;
         this.studentDao = studentDao;
         this.courseDao = courseDao;

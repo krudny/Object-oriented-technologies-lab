@@ -69,8 +69,7 @@ public class PhotoDownloader {
 
     private Observable<Photo> setSuitableScheduler(GroupedObservable<PhotoSize, Photo> group) {
         return switch (Objects.requireNonNull(group.getKey())) {
-            case SMALL -> group.observeOn(Schedulers.io());
-            case MEDIUM -> group.observeOn(Schedulers.io());
+            case SMALL, MEDIUM -> group.observeOn(Schedulers.io());
             case LARGE -> group.observeOn(Schedulers.computation());
         };
     }
