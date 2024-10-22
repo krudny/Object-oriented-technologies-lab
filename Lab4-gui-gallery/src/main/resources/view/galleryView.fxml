@@ -9,7 +9,7 @@
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0"
             styleClass="gallery-pane"
-            stylesheets="css/gallery.css"
+            stylesheets="/css/gallery.css"
             fx:controller="controller.GalleryController">
     <top>
         <HBox styleClass="form-box">

@@ -3,12 +3,22 @@ package controller;
 
 import javafx.fxml.FXML;
 
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import model.Gallery;
 import model.Photo;
 
 public class GalleryController {
 
     private Gallery galleryModel;
+
+    @FXML
+    private TextField imageNameField;
+
+    @FXML
+    private ImageView imageView;
+
+
 
     @FXML
     public void initialize() {
@@ -21,7 +31,8 @@ public class GalleryController {
     }
 
     private void bindSelectedPhoto(Photo selectedPhoto) {
-        // TODO view <-> model bindings configuration
+        imageNameField.textProperty().bindBidirectional(selectedPhoto.nameProperty());
+        imageView.imageProperty().bind(selectedPhoto.photoDataProperty());
     }
 }
 
