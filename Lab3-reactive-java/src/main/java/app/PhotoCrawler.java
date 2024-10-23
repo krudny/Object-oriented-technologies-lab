@@ -53,6 +53,7 @@ public class PhotoCrawler {
 
     public void downloadPhotosForMultipleQueries(List<String> queries) {
         photoDownloader.searchForPhotos(queries)
+                .take(10)
                 .blockingSubscribe(photoSerializer::savePhoto);
     }
 
