@@ -1,8 +1,10 @@
 package controller;
 
 
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 import javafx.scene.control.ListCell;
@@ -11,21 +13,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import model.Gallery;
 import model.Photo;
+import util.PhotoDownloader;
 
 public class GalleryController {
-
     private Gallery galleryModel;
-
     @FXML
     private TextField imageNameField;
-
     @FXML
     private ImageView imageView;
-
     @FXML
     private ListView<Photo> imagesListView;
-
-
+    @FXML
+    private TextField searchTextField;
 
     @FXML
     public void initialize() {
@@ -46,11 +45,25 @@ public class GalleryController {
         });
 
         imagesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && oldValue != null) {
-                imageNameField.textProperty().unbindBidirectional(oldValue.nameProperty());
+            if (newValue != null) {
+                if (oldValue != null) {
+                    imageNameField.textProperty().unbindBidirectional(oldValue.nameProperty());
+                }
                 bindSelectedPhoto(newValue);
             }
         });
+    }
+
+    public void searchButtonClicked(ActionEvent event) {
+        PhotoDownloader photoDownloader = new PhotoDownloader();
+
+        galleryModel.clear();
+        setModel(galleryModel);
+        photoDownloader.searchForPhotos(searchTextField.getText())
+                .take(10)
+                .subscribe(photo -> {galleryModel.addPhoto(photo);
+                    setModel(galleryModel);
+                });
     }
 
     public void setModel(Gallery gallery) {
