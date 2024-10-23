@@ -44,6 +44,13 @@ public class GalleryController {
                 }
             }
         });
+
+        imagesListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && oldValue != null) {
+                imageNameField.textProperty().unbindBidirectional(oldValue.nameProperty());
+                bindSelectedPhoto(newValue);
+            }
+        });
     }
 
     public void setModel(Gallery gallery) {
