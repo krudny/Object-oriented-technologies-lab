@@ -4,7 +4,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.converter.BigDecimalStringConverter;
+import javafx.util.converter.LocalDateStringConverter;
 import model.Transaction;
+
+import java.time.format.DateTimeFormatter;
 
 public class TransactionEditDialogPresenter {
 
@@ -54,6 +58,13 @@ public class TransactionEditDialogPresenter {
 	}
 	
 	private void updateControls() {
-		// TODO: implement
+		String pattern = "yyyy-MM-dd";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		LocalDateStringConverter dateConverter = new LocalDateStringConverter(formatter, formatter);
+
+		dateTextField.setText(dateConverter.toString(transaction.getDate()));
+		payeeTextField.setText(transaction.getPayee());
+		categoryTextField.setText(transaction.getCategory().getName());
+		inflowTextField.setText(transaction.getInflow().toString());
 	}
 }
