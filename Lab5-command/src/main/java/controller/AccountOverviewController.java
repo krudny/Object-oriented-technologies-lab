@@ -3,6 +3,7 @@ package controller;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import command.AddTransactionCommand;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -111,9 +112,11 @@ public class AccountOverviewController {
 	@FXML
 	private void handleAddAction(ActionEvent event) {
 		Transaction transaction = Transaction.newTransaction();
+		AddTransactionCommand addTransactionCommand = new AddTransactionCommand(transaction, data);
+
 
 		if (appController.showTransactionEditDialog(transaction)) {
-			data.addTransaction(transaction);
+			commandRegistry.executeCommand(addTransactionCommand);
 		}
 	}
 
