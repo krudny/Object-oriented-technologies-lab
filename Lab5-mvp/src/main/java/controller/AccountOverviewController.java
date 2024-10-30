@@ -67,6 +67,16 @@ public class AccountOverviewController {
 		}
 	}
 
+	@FXML
+	private void handleAddAction(ActionEvent event) {
+		Transaction transaction = Transaction.newTransaction();
+		if (appController.showTransactionEditDialog(transaction)) {
+			data.addTransaction(transaction);
+		}
+
+
+	}
+
 	public void setData(Account acccount) {
 		this.data = acccount;
 		transactionsTable.setItems(data.getTransactions());
