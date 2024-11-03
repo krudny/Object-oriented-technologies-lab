@@ -25,4 +25,14 @@ public class RemoveTransactionCommand implements Command{
         return transactionsToRemove.size() + " transactions removed";
     }
 
+    @Override
+    public void undo() {
+        account.getTransactions().addAll(transactionsToRemove);
+    }
+
+    @Override
+    public void redo() {
+        account.getTransactions().removeAll(transactionsToRemove);
+    }
+
 }

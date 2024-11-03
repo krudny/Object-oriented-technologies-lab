@@ -21,4 +21,14 @@ public class AddTransactionCommand implements Command{
     public String getName() {
         return "New transaction: " + transactionToAdd.toString();
     }
+
+    @Override
+    public void undo() {
+        account.getTransactions().remove(transactionToAdd);
+    }
+
+    @Override
+    public void redo() {
+        account.getTransactions().add(transactionToAdd);
+    }
 }
