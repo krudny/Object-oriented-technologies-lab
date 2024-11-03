@@ -11,6 +11,8 @@ The course aims to introduce students to advanced object oriented technologies a
 - [Lab2](https://github.com/krudny/Object-oriented-technologies-lab/tree/main/Lab2-orm-repository) - DAO, Repository persistence design patterns
 - [Lab3](https://github.com/krudny/Object-oriented-technologies-lab/tree/main/Lab3-reactive-java) - photo downloader using rxJava
 - [Lab4](https://github.com/krudny/Object-oriented-technologies-lab/tree/main/Lab4-gui-gallery) - extending 3rd lab adding frontend in JavaFX
+- [Lab5](https://github.com/krudny/Object-oriented-technologies-lab/tree/main/Lab5-mvp) - mvp design pattern 
+- [Lab6](https://github.com/krudny/Object-oriented-technologies-lab/tree/main/Lab6-command) - extending mvp app with command design pattern
 
 ## Technologies
 
