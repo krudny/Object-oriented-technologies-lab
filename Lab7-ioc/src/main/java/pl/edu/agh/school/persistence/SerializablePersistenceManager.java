@@ -4,9 +4,12 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.inject.Inject;
 import pl.edu.agh.logger.Logger;
 import pl.edu.agh.school.SchoolClass;
 import pl.edu.agh.school.Teacher;
+
+import javax.inject.Named;
 
 public final class SerializablePersistenceManager implements IPersistenceManager {
 
@@ -79,11 +82,13 @@ public final class SerializablePersistenceManager implements IPersistenceManager
         return res;
     }
 
-    public void setTeachersStorageFileName(String teachersStorageFileName) {
+    @Inject
+    public void setTeachersStorageFileName(@Named("teachersStorage") String teachersStorageFileName) {
         this.teachersStorageFileName = teachersStorageFileName;
     }
 
-    public void setClassStorageFileName(String classStorageFileName) {
+    @Inject
+    public void setClassStorageFileName(@Named("classStorage") String classStorageFileName) {
         this.classStorageFileName = classStorageFileName;
     }
 }
