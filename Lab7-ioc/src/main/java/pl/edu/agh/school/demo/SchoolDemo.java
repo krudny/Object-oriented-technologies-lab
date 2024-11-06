@@ -16,6 +16,7 @@ import pl.edu.agh.school.Student;
 import pl.edu.agh.school.Subject;
 import pl.edu.agh.school.Teacher;
 import pl.edu.agh.school.Term;
+import pl.edu.agh.school.persistence.IPersistenceManager;
 import pl.edu.agh.school.persistence.SerializablePersistenceManager;
 
 public class SchoolDemo {
