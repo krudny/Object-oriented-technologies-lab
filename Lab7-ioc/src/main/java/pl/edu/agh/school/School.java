@@ -1,5 +1,7 @@
 package pl.edu.agh.school;
 
+import pl.edu.agh.school.persistence.IPersistenceManager;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -7,8 +9,8 @@ public class School {
 
     private SchoolDAO schoolDAO;
 
-    public School() {
-        this.schoolDAO = new SchoolDAO();
+    public School(IPersistenceManager persistenceManager) {
+        this.schoolDAO = new SchoolDAO(persistenceManager);
     }
 
     public void addTeacher(Teacher teacher) {
