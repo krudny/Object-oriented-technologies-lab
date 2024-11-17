@@ -1,5 +1,6 @@
 package pl.edu.agh.school;
 
+import com.google.inject.Inject;
 import pl.edu.agh.school.persistence.IPersistenceManager;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ public class School {
 
     private SchoolDAO schoolDAO;
 
+    @Inject
     public School(IPersistenceManager persistenceManager) {
         this.schoolDAO = new SchoolDAO(persistenceManager);
     }

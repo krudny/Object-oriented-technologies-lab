@@ -17,8 +17,8 @@ public final class SerializablePersistenceManager implements IPersistenceManager
     private String classStorageFileName;
 
     public SerializablePersistenceManager() {
-        teachersStorageFileName = "teachers.dat";
-        classStorageFileName = "classes.dat";
+        this.setTeachersStorageFileName("teachers.dat");
+        this.setClassStorageFileName("classes.dat");
     }
 
     public void saveTeachers(List<Teacher> teachers) {
@@ -77,5 +77,13 @@ public final class SerializablePersistenceManager implements IPersistenceManager
             throw new IllegalArgumentException(e);
         }
         return res;
+    }
+
+    public void setTeachersStorageFileName(String teachersStorageFileName) {
+        this.teachersStorageFileName = teachersStorageFileName;
+    }
+
+    public void setClassStorageFileName(String classStorageFileName) {
+        this.classStorageFileName = classStorageFileName;
     }
 }
