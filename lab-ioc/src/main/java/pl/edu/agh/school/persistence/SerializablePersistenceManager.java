@@ -8,7 +8,7 @@ import pl.edu.agh.logger.Logger;
 import pl.edu.agh.school.SchoolClass;
 import pl.edu.agh.school.Teacher;
 
-public final class SerializablePersistenceManager {
+public final class SerializablePersistenceManager implements IPersistenceManager {
 
     private static final Logger log = Logger.getInstance();
 

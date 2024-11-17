@@ -16,6 +16,7 @@ import pl.edu.agh.school.Student;
 import pl.edu.agh.school.Subject;
 import pl.edu.agh.school.Teacher;
 import pl.edu.agh.school.Term;
+import pl.edu.agh.school.persistence.SerializablePersistenceManager;
 
 public class SchoolDemo {
 
@@ -24,14 +25,13 @@ public class SchoolDemo {
     private final DateFormat timeFormat = new SimpleDateFormat("hh:mm");
 
     public SchoolDemo() {
-        school = new School();
+        school = new School(new SerializablePersistenceManager());
     }
 
     public static void main(String[] args) throws Exception {
 
         Logger.getInstance().registerSerializer(new ConsoleMessageSerializer());
-        Logger.getInstance().registerSerializer(
-                new FileMessageSerializer("logfile.log"));
+        Logger.getInstance().registerSerializer(new FileMessageSerializer("logfile.log"));
 
         SchoolDemo schoolDemo = new SchoolDemo();
         schoolDemo.initTeachers();
