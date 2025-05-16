@@ -8,7 +8,7 @@ import pl.edu.agh.logger.Logger;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class SchoolModuleTest {
-
+  
     @Test
     public void testLoggerSingleton() {
         Injector injector = Guice.createInjector(new SchoolModule());
